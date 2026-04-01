@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rede Parceria — Com Você Todo Dia</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700;900&family=Sora:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #5A9B2A;
+    --verde-light: #7DC340;
+    --verde-dark: #2E6B12;
+    --verde-pale: #B8DC8A;
+    --branco: #FFFFFF;
+    --cinza-light: #F4F7F0;
+    --cinza: #8A9E7A;
+    --preto: #0D1A08;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--preto);
+    color: var(--branco);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--verde-light);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9999;
+    transition: transform 0.15s ease;
+    mix-blend-mode: exclusion;
+  }
+  .cursor-ring {
+    width: 40px; height: 40px;
+    border: 1.5px solid var(--verde-light);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9998;
+    transition: transform 0.4s ease, width 0.3s, height 0.3s;
+    mix-blend-mode: exclusion;
+  }
+  .cursor-ring.expand { width: 70px; height: 70px; }
+
+  /* Nav */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 24px 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.4s, padding 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(13,26,8,0.92);
+    backdrop-filter: blur(20px);
+    padding: 16px 60px;
+    border-bottom: 1px solid rgba(90,155,42,0.2);
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none;
+  }
+  .nav-logo-icon {
+    width: 36px; height: 36px;
+  }
+  .nav-logo-text {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px; font-weight: 700;
+    color: var(--branco); letter-spacing: 0.05em;
+    line-height: 1.2;
+  }
+  .nav-logo-text span { color: var(--verde-light); display: block; }
+  .nav-links {
+    display: flex; gap: 40px; list-style: none;
+  }
+  .nav-links a {
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    font-size: 13px; font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 0; width: 0; height: 1px;
+    background: var(--verde-light);
+    transition: width 0.3s;
+  }
+  .nav-links a:hover { color: var(--branco); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-cta {
+    background: var(--verde);
+    color: var(--branco) !important;
+    padding: 10px 24px;
+    border-radius: 40px;
+    font-weight: 600 !important;
+    transition: background 0.3s !important;
+  }
+  .nav-cta:hover { background: var(--verde-light) !important; }
+  .nav-cta::after { display: none !important; }
+
+  /* Hero */
+  .hero {
+    height: 100vh;
+    display: flex; align-items: center;
+    position: relative; overflow: hidden;
+    padding: 0 60px;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(90,155,42,0.18) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 80% at 10% 80%, rgba(46,107,18,0.25) 0%, transparent 60%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(90,155,42,0.06) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(90,155,42,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 30%, transparent 80%);
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    max-width: 700px;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: rgba(90,155,42,0.15);
+    border: 1px solid rgba(90,155,42,0.4);
+    border-radius: 40px;
+    padding: 8px 18px;
+    font-size: 11px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--verde-pale);
+    margin-bottom: 32px;
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--verde-light);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.5); }
+  }
+  .hero-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(52px, 7vw, 96px);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+    opacity: 0; transform: translateY(30px);
+    animation: fadeUp 0.9s 0.4s forwards;
+  }
+  .hero-title .line-green { color: var(--verde-light); display: block; }
+  .hero-title .line-outline {
+    display: block;
+    -webkit-text-stroke: 2px rgba(255,255,255,0.3);
+    color: transparent;
+  }
+  .hero-desc {
+    font-size: 16px; line-height: 1.7;
+    color: rgba(255,255,255,0.55);
+    max-width: 460px;
+    margin-bottom: 48px;
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp 0.9s 0.6s forwards;
+  }
+  .hero-actions {
+    display: flex; gap: 16px; align-items: center;
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp 0.9s 0.8s forwards;
+  }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--verde);
+    color: var(--branco);
+    text-decoration: none;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 16px 32px; border-radius: 60px;
+    transition: background 0.3s, transform 0.3s;
+  }
+  .btn-primary:hover { background: var(--verde-light); transform: translateY(-2px); }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    font-size: 13px; font-weight: 400;
+    letter-spacing: 0.04em;
+    transition: color 0.3s;
+  }
+  .btn-ghost:hover { color: var(--branco); }
+  .btn-ghost svg { transition: transform 0.3s; }
+  .btn-ghost:hover svg { transform: translateX(4px); }
+
+  /* Hero right visual */
+  .hero-visual {
+    position: absolute; right: 0; top: 0; bottom: 0;
+    width: 45%;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    animation: fadeIn 1.2s 1s forwards;
+  }
+  .hero-cart-big {
+    width: 340px; height: 340px;
+    position: relative;
+  }
+  .hero-cart-big svg {
+    width: 100%; height: 100%;
+    filter: drop-shadow(0 0 80px rgba(90,155,42,0.5));
+    animation: float 4s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-16px); }
+  }
+  .hero-glow {
+    position: absolute; inset: -40px;
+    background: radial-gradient(circle, rgba(90,155,42,0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: glowPulse 3s ease-in-out infinite;
+  }
+  @keyframes glowPulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    background: rgba(90,155,42,0.08);
+    border-top: 1px solid rgba(90,155,42,0.15);
+    border-bottom: 1px solid rgba(90,155,42,0.15);
+    padding: 32px 60px;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+  }
+  .stat-item {
+    text-align: center;
+    padding: 0 20px;
+    border-right: 1px solid rgba(90,155,42,0.2);
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-item.visible { opacity: 1; transform: translateY(0); }
+  .stat-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 40px; font-weight: 900;
+    color: var(--verde-light);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-label {
+    font-size: 12px; letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+  }
+
+  /* Section base */
+  section { padding: 120px 60px; }
+
+  .section-tag {
+    display: inline-block;
+    font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--verde-light);
+    margin-bottom: 20px;
+    position: relative; padding-left: 20px;
+  }
+  .section-tag::before {
+    content: '';
+    position: absolute; left: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 10px; height: 1px;
+    background: var(--verde-light);
+  }
+  .section-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(36px, 4vw, 60px);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+
+  /* About section */
+  .about {
+    background: var(--cinza-light);
+    color: var(--preto);
+    position: relative; overflow: hidden;
+  }
+  .about::before {
+    content: 'CE';
+    position: absolute; right: -20px; top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 280px; font-weight: 900;
+    color: rgba(90,155,42,0.06);
+    line-height: 1; pointer-events: none;
+    letter-spacing: -0.05em;
+  }
+  .about-inner {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px; align-items: center;
+  }
+  .about-text .section-tag { color: var(--verde-dark); }
+  .about-text .section-tag::before { background: var(--verde-dark); }
+  .about-text .section-title { color: var(--preto); }
+  .about-desc {
+    font-size: 16px; line-height: 1.8;
+    color: rgba(13,26,8,0.6);
+    margin-bottom: 40px;
+  }
+  .about-right { position: relative; }
+  .about-card {
+    background: var(--preto);
+    border-radius: 24px; padding: 48px;
+    position: relative; overflow: hidden;
+    transform: rotate(2deg);
+    transition: transform 0.4s;
+  }
+  .about-card:hover { transform: rotate(0deg); }
+  .about-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--verde), var(--verde-light));
+  }
+  .about-card-icon {
+    width: 60px; height: 60px;
+    background: rgba(90,155,42,0.15);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px;
+  }
+  .about-card h3 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--branco); margin-bottom: 12px;
+  }
+  .about-card p {
+    font-size: 14px; line-height: 1.7;
+    color: rgba(255,255,255,0.5);
+  }
+  .about-card-accent {
+    position: absolute; bottom: -20px; right: -20px;
+    width: 100px; height: 100px;
+    background: var(--verde);
+    border-radius: 50%;
+    opacity: 0.1;
+  }
+
+  /* Brand section */
+  .brand {
+    background: var(--preto);
+    position: relative; overflow: hidden;
+  }
+  .brand-inner {
+    display: grid; grid-template-columns: 1fr 1.2fr;
+    gap: 80px; align-items: center;
+  }
+  .brand-visual-wrap {
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .brand-logo-display {
+    width: 100%; max-width: 440px;
+    background: linear-gradient(135deg, rgba(90,155,42,0.15), rgba(46,107,18,0.08));
+    border: 1px solid rgba(90,155,42,0.2);
+    border-radius: 32px;
+    padding: 60px 48px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .brand-logo-display::before {
+    content: '';
+    position: absolute; top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: conic-gradient(transparent, rgba(90,155,42,0.08), transparent 30%);
+    animation: rotate 8s linear infinite;
+  }
+  @keyframes rotate { to { transform: rotate(360deg); } }
+  .brand-logo-inner {
+    position: relative; z-index: 1;
+  }
+  .brand-logo-inner svg { width: 200px; height: auto; margin: 0 auto 24px; display: block; }
+  .brand-name {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 28px; font-weight: 900;
+    color: var(--branco);
+    line-height: 1.1;
+  }
+  .brand-name span {
+    display: block; font-size: 14px; font-weight: 300;
+    color: var(--verde-light); letter-spacing: 0.15em;
+    text-transform: uppercase; margin-bottom: 4px;
+  }
+  .brand-slogan {
+    margin-top: 16px;
+    font-size: 12px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: rgba(255,255,255,0.4);
+  }
+  .brand-desc {
+    font-size: 15px; line-height: 1.8;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 32px;
+  }
+  .brand-features {
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .brand-feature {
+    display: flex; gap: 16px; align-items: flex-start;
+    opacity: 0; transform: translateX(-20px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+  .brand-feature.visible { opacity: 1; transform: translateX(0); }
+  .brand-feature-icon {
+    width: 42px; height: 42px; flex-shrink: 0;
+    background: rgba(90,155,42,0.12);
+    border: 1px solid rgba(90,155,42,0.25);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .brand-feature-text h4 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px; font-weight: 700;
+    color: var(--branco); margin-bottom: 4px;
+  }
+  .brand-feature-text p {
+    font-size: 13px; line-height: 1.6;
+    color: rgba(255,255,255,0.45);
+  }
+
+  /* Colors section */
+  .colors {
+    background: #0A150504;
+    background: linear-gradient(180deg, var(--preto) 0%, #0f1e09 100%);
+  }
+  .colors-header { text-align: center; margin-bottom: 64px; }
+  .colors-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 24px; max-width: 900px; margin: 0 auto;
+  }
+  .color-card {
+    border-radius: 20px; overflow: hidden;
+    transition: transform 0.4s;
+  }
+  .color-card:hover { transform: translateY(-8px); }
+  .color-swatch {
+    height: 200px;
+    position: relative; overflow: hidden;
+  }
+  .color-swatch::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.3));
+  }
+  .color-info {
+    padding: 20px 24px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-top: none;
+    border-radius: 0 0 20px 20px;
+  }
+  .color-info h3 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 15px; font-weight: 700;
+    color: var(--branco); margin-bottom: 4px;
+  }
+  .color-info p { font-size: 12px; color: rgba(255,255,255,0.4); }
+
+  /* Communication section */
+  .comm {
+    background: var(--cinza-light);
+    color: var(--preto);
+  }
+  .comm-header { margin-bottom: 60px; }
+  .comm-header .section-title { color: var(--preto); }
+  .comm-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto auto;
+    gap: 20px;
+  }
+  .comm-card {
+    border-radius: 20px; overflow: hidden;
+    position: relative;
+    transition: transform 0.4s;
+  }
+  .comm-card:hover { transform: scale(1.02); }
+  .comm-card.tall { grid-row: span 2; }
+  .comm-card-img {
+    width: 100%; height: 100%;
+    min-height: 220px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .comm-card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(13,26,8,0.8) 0%, transparent 50%);
+    display: flex; align-items: flex-end;
+    padding: 24px;
+  }
+  .comm-card-label {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px; font-weight: 700;
+    color: var(--branco); text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Mock comm cards */
+  .mock-banner {
+    background: linear-gradient(135deg, #4a8a1a, #7DC340);
+    height: 100%; min-height: 220px;
+    display: flex; flex-direction: column;
+    align-items: flex-start; justify-content: center;
+    padding: 32px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 28px; font-weight: 900;
+    color: var(--branco); line-height: 1.1;
+  }
+  .mock-banner.dark { background: var(--preto); }
+  .mock-banner .sub { font-size: 11px; font-weight: 400; color: rgba(255,255,255,0.5); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; display: block; }
+  .mock-shirt {
+    background: #6db52e;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 64px;
+  }
+  .mock-bag {
+    background: linear-gradient(135deg, #3a7a0a, #5A9B2A);
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Concorrência section */
+  .comp {
+    background: #070f04;
+    padding: 80px 60px;
+  }
+  .comp-inner {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px; align-items: center;
+  }
+  .comp-text .section-title { color: var(--branco); }
+  .comp-text .section-tag { color: var(--verde-light); }
+  .comp-desc {
+    font-size: 15px; line-height: 1.8;
+    color: rgba(255,255,255,0.5); margin-bottom: 40px;
+  }
+  .comp-logos {
+    display: flex; flex-wrap: wrap; gap: 12px;
+  }
+  .comp-logo-tag {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 10px 18px; border-radius: 8px;
+    font-size: 13px; color: rgba(255,255,255,0.6);
+    font-weight: 500;
+  }
+  .comp-chart {
+    background: rgba(90,155,42,0.06);
+    border: 1px solid rgba(90,155,42,0.15);
+    border-radius: 24px; padding: 40px;
+  }
+  .comp-chart h4 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 14px; color: var(--verde-light);
+    margin-bottom: 32px; letter-spacing: 0.05em;
+  }
+  .bar-row {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 16px;
+  }
+  .bar-label {
+    width: 110px; font-size: 12px; color: rgba(255,255,255,0.5);
+    text-align: right; flex-shrink: 0;
+  }
+  .bar-track {
+    flex: 1; height: 8px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 4px; overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%; border-radius: 4px;
+    background: var(--verde);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bar-fill.verde-light { background: var(--verde-light); }
+  .bar-fill.verde-pale { background: var(--verde-pale); }
+  .bar-fill.cinza { background: rgba(255,255,255,0.2); }
+  .bar-fill.animated { transform: scaleX(1); }
+  .bar-val { font-size: 12px; color: var(--verde-light); font-weight: 600; width: 36px; }
+
+  /* Products / private label */
+  .products {
+    background: var(--preto);
+  }
+  .products-header { margin-bottom: 60px; }
+  .products-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .product-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(90,155,42,0.15);
+    border-radius: 20px; overflow: hidden;
+    transition: transform 0.4s, border-color 0.4s;
+    cursor: pointer;
+  }
+  .product-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(90,155,42,0.5);
+  }
+  .product-visual {
+    height: 180px;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, rgba(90,155,42,0.1), rgba(46,107,18,0.05));
+    font-size: 60px; position: relative;
+  }
+  .product-badge {
+    position: absolute; top: 12px; right: 12px;
+    background: var(--verde);
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 20px;
+    color: var(--branco);
+  }
+  .product-info { padding: 20px 20px 24px; }
+  .product-info h3 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--branco); margin-bottom: 6px;
+  }
+  .product-info p { font-size: 12px; color: rgba(255,255,255,0.4); }
+
+  /* CTA section */
+  .cta-section {
+    background: linear-gradient(135deg, var(--verde-dark) 0%, var(--verde) 50%, var(--verde-light) 100%);
+    padding: 100px 60px;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                      radial-gradient(circle at 80% 50%, rgba(0,0,0,0.1) 0%, transparent 50%);
+  }
+  .cta-section::after {
+    content: 'COM VOCÊ TODO DIA';
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 120px; font-weight: 900;
+    color: rgba(255,255,255,0.05);
+    letter-spacing: -0.05em;
+    pointer-events: none; white-space: nowrap;
+    overflow: hidden;
+  }
+  .cta-inner { position: relative; z-index: 1; }
+  .cta-section .section-title {
+    color: var(--branco); font-size: clamp(40px, 5vw, 72px);
+    margin-bottom: 20px;
+  }
+  .cta-section p {
+    font-size: 17px; color: rgba(255,255,255,0.75);
+    max-width: 500px; margin: 0 auto 48px; line-height: 1.7;
+  }
+  .btn-white {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--branco);
+    color: var(--verde-dark);
+    text-decoration: none;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 18px 40px; border-radius: 60px;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .btn-white:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  }
+
+  /* Footer */
+  footer {
+    background: #050c03;
+    padding: 64px 60px 40px;
+    border-top: 1px solid rgba(90,155,42,0.1);
+  }
+  .footer-inner {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px; margin-bottom: 60px;
+  }
+  .footer-brand-desc {
+    font-size: 14px; line-height: 1.7;
+    color: rgba(255,255,255,0.35);
+    margin-top: 20px;
+  }
+  .footer-col h4 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--verde-light); margin-bottom: 20px;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .footer-col ul a {
+    text-decoration: none; font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    transition: color 0.3s;
+  }
+  .footer-col ul a:hover { color: var(--branco); }
+  .footer-bottom {
+    padding-top: 32px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-bottom p { font-size: 12px; color: rgba(255,255,255,0.25); }
+  .footer-social { display: flex; gap: 12px; }
+  .social-link {
+    width: 36px; height: 36px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.3s;
+    text-decoration: none; color: rgba(255,255,255,0.5);
+    font-size: 14px;
+  }
+  .social-link:hover { background: var(--verde); color: var(--branco); }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--preto); }
+  ::-webkit-scrollbar-thumb { background: var(--verde); border-radius: 2px; }
+
+  /* Marquee */
+  .marquee-wrap {
+    overflow: hidden;
+    background: var(--verde);
+    padding: 14px 0;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+  }
+  .marquee-track {
+    display: flex; gap: 0;
+    animation: marquee 20s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-item {
+    display: inline-flex; align-items: center; gap: 20px;
+    padding: 0 40px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--branco);
+  }
+  .marquee-dot { width: 6px; height: 6px; background: rgba(255,255,255,0.4); border-radius: 50%; }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Nav -->
+<nav id="nav">
+  <a href="#" class="nav-logo">
+    <svg class="nav-logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 8H34L30 26H10L6 8Z" fill="#5A9B2A" rx="4"/>
+      <rect x="8" y="8" width="24" height="4" rx="2" fill="#7DC340"/>
+      <path d="M8 12L12 26H28L32 12" fill="#5A9B2A"/>
+      <rect x="13" y="14" width="14" height="8" rx="2" fill="#2E6B12"/>
+      <circle cx="15" cy="32" r="3" fill="#7DC340"/>
+      <circle cx="25" cy="32" r="3" fill="#7DC340"/>
+    </svg>
+    <div class="nav-logo-text">
+      <span>Rede</span>Parceria
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#sobre">Sobre</a></li>
+    <li><a href="#identidade">Identidade</a></li>
+    <li><a href="#produtos">Marca Própria</a></li>
+    <li><a href="#lojas">Lojas</a></li>
+    <li><a href="#contato" class="nav-cta">Seja Associado</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      Ceará · 22 Associados · 70+ Lojas
+    </div>
+    <h1 class="hero-title">
+      <span>Com você</span>
+      <span class="line-green">todo dia.</span>
+      <span class="line-outline">sempre.</span>
+    </h1>
+    <p class="hero-desc">
+      A rede de supermercados que conecta o comércio cearense. Inteligência de mercado, identidade forte e parceria real.
+    </p>
+    <div class="hero-actions">
+      <a href="#sobre" class="btn-primary">
+        Conheça a Rede
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9 4L13 8L9 12" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="#identidade" class="btn-ghost">
+        Ver nova identidade
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9 4L13 8L9 12" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-cart-big">
+      <div class="hero-glow"></div>
+      <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M30 40H170L155 130H45L30 40Z" fill="#5A9B2A" rx="12"/>
+        <rect x="28" y="36" width="144" height="20" rx="10" fill="#7DC340"/>
+        <path d="M32 56L48 130H152L168 56" fill="#4a8a1a"/>
+        <rect x="68" y="70" width="64" height="36" rx="8" fill="#2E6B12"/>
+        <circle cx="72" cy="155" r="14" fill="#7DC340"/>
+        <circle cx="128" cy="155" r="14" fill="#7DC340"/>
+        <circle cx="72" cy="155" r="7" fill="#2E6B12"/>
+        <circle cx="128" cy="155" r="7" fill="#2E6B12"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- Marquee -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">Com Você Todo Dia <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Preço Baixo Todo Dia <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Qualidade Todo Dia <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Economia Todo Dia <span class="marquee-dot"></span></span>
+    <span class="marquee-item">70+ Lojas no Ceará <span class="marquee-dot"></span></span>
+    <span class="marquee-item">22 Associados <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Com Você Todo Dia <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Preço Baixo Todo Dia <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Qualidade Todo Dia <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Economia Todo Dia <span class="marquee-dot"></span></span>
+    <span class="marquee-item">70+ Lojas no Ceará <span class="marquee-dot"></span></span>
+    <span class="marquee-item">22 Associados <span class="marquee-dot"></span></span>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num" data-count="22">0</div>
+    <div class="stat-label">Associados</div>
+  </div>
+  <div class="stat-item" style="transition-delay:0.15s">
+    <div class="stat-num" data-count="70">0</div>
+    <div class="stat-label">Lojas no Ceará</div>
+  </div>
+  <div class="stat-item" style="transition-delay:0.3s">
+    <div class="stat-num" data-suffix="+" data-count="1">0</div>
+    <div class="stat-label">Estado Atendido</div>
+  </div>
+  <div class="stat-item" style="transition-delay:0.45s">
+    <div class="stat-num" data-suffix="k+" data-count="500">0</div>
+    <div class="stat-label">Clientes Atendidos</div>
+  </div>
+</div>
+
+<!-- About -->
+<section class="about" id="sobre">
+  <div class="about-inner">
+    <div class="about-text">
+      <span class="section-tag">Quem somos</span>
+      <h2 class="section-title">A rede parceira da sua economia</h2>
+      <p class="about-desc">
+        A Rede Parceria é uma rede de supermercados que conecta 22 associados e mais de 70 lojas por todo o Ceará. Disputamos espaço com grandes redes, mas com a vantagem de sermos verdadeiramente cearenses.
+      </p>
+      <p class="about-desc" style="margin-bottom: 0;">
+        Nossa nova identidade visual expressa a evolução que fortalece nossa conexão com o segmento, destacando a origem cearense e refletindo o novo momento da marca.
+      </p>
+    </div>
+    <div class="about-right">
+      <div class="about-card">
+        <div class="about-card-icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M5 10h18l-2.5 12H7.5L5 10Z" fill="#5A9B2A"/><rect x="4" y="8" width="20" height="4" rx="2" fill="#7DC340"/><circle cx="10" cy="25" r="2.5" fill="#7DC340"/><circle cx="18" cy="25" r="2.5" fill="#7DC340"/></svg>
+        </div>
+        <h3>Orgulho de ser cearense</h3>
+        <p>O "CE" conectado no meio do nosso logotipo destaca e valoriza nossas raízes. Uma marca que representa o povo e a garra do nordeste.</p>
+        <div class="about-card-accent"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Brand Identity -->
+<section class="brand" id="identidade">
+  <div class="brand-inner">
+    <div class="brand-visual-wrap">
+      <div class="brand-logo-display">
+        <div class="brand-logo-inner">
+          <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M30 40H170L155 130H45L30 40Z" fill="white" rx="12"/>
+            <rect x="28" y="36" width="144" height="20" rx="10" fill="rgba(255,255,255,0.8)"/>
+            <path d="M32 56L48 130H152L168 56" fill="rgba(255,255,255,0.7)"/>
+            <rect x="68" y="70" width="64" height="36" rx="8" fill="rgba(0,0,0,0.2)"/>
+            <circle cx="72" cy="155" r="14" fill="white"/>
+            <circle cx="128" cy="155" r="14" fill="white"/>
+          </svg>
+          <div class="brand-name">
+            <span>Rede</span>
+            PARCERIA
+          </div>
+          <div class="brand-slogan">Com Você Todo Dia</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <span class="section-tag">Nova Identidade</span>
+      <h2 class="section-title">Renovados. Mais fortes. Cearenses.</h2>
+      <p class="brand-desc">
+        A nova identidade visual da Rede Parceria foi construída sobre três pilares: o ícone do carrinho de supermercado em forma de "P", a tipografia personalizada que expressa aconchego e proximidade, e o orgulho da origem cearense estampado no nome.
+      </p>
+      <div class="brand-features">
+        <div class="brand-feature">
+          <div class="brand-feature-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5H17L15 14H5L3 5Z" fill="#7DC340"/><circle cx="7" cy="17" r="1.5" fill="#7DC340"/><circle cx="13" cy="17" r="1.5" fill="#7DC340"/></svg>
+          </div>
+          <div class="brand-feature-text">
+            <h4>Ícone em forma de "P"</h4>
+            <p>Carrinho de supermercado redesenhado para reforçar o setor e a identidade da marca com um grid geométrico preciso.</p>
+          </div>
+        </div>
+        <div class="brand-feature" style="transition-delay:0.1s">
+          <div class="brand-feature-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><text x="2" y="15" font-family="serif" font-size="14" fill="#7DC340" font-weight="bold">Aa</text></svg>
+          </div>
+          <div class="brand-feature-text">
+            <h4>Tipografia personalizada</h4>
+            <p>Fonte criada com linhas curvas, formas arredondadas e fortes para expressar aconchego, proximidade e confiança.</p>
+          </div>
+        </div>
+        <div class="brand-feature" style="transition-delay:0.2s">
+          <div class="brand-feature-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#7DC340" stroke-width="1.5"/><text x="5" y="15" font-family="sans-serif" font-size="9" fill="#7DC340" font-weight="bold">CE</text></svg>
+          </div>
+          <div class="brand-feature-text">
+            <h4>Origem cearense em destaque</h4>
+            <p>O "CE" conectado no meio da palavra PARCERIA celebra e valoriza as raízes cearenses da rede.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Colors -->
+<section class="colors">
+  <div class="colors-header">
+    <span class="section-tag">Identidade Visual</span>
+    <h2 class="section-title">Nossa cartela de cores</h2>
+  </div>
+  <div class="colors-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background: linear-gradient(160deg, #7DC340 0%, #5A9B2A 100%);"></div>
+      <div class="color-info">
+        <h3>Verde Principal</h3>
+        <p>Economia, proximidade e frescor</p>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: linear-gradient(160deg, #2E6B12 0%, #1a4a08 100%);"></div>
+      <div class="color-info">
+        <h3>Verde Escuro</h3>
+        <p>Solidez e confiança</p>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: linear-gradient(160deg, #F4F7F0 0%, #e8f0e0 100%);"></div>
+      <div class="color-info" style="color: var(--preto);">
+        <h3 style="color: var(--preto);">Branco</h3>
+        <p style="color: rgba(13,26,8,0.5);">Clareza e qualidade</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Competition -->
+<section class="comp" id="lojas">
+  <div class="comp-inner">
+    <div class="comp-text">
+      <span class="section-tag">Cenário Competitivo</span>
+      <h2 class="section-title">Posicionamento forte no Ceará</h2>
+      <p class="comp-desc">
+        A Rede Parceria compete com redes como Uniforça e Rede Integrada, além de grandes players como Super Lagoa, Cometa, Frangolândia e Centerbox. Nossa força está na capilaridade e no DNA cearense.
+      </p>
+      <div class="comp-logos">
+        <span class="comp-logo-tag">Uniforça</span>
+        <span class="comp-logo-tag">Rede Integrada</span>
+        <span class="comp-logo-tag">Super Lagoa</span>
+        <span class="comp-logo-tag">Cometa</span>
+        <span class="comp-logo-tag">Frangolândia</span>
+        <span class="comp-logo-tag">Centerbox</span>
+      </div>
+    </div>
+    <div class="comp-chart">
+      <h4>Nossa posição — Ceará</h4>
+      <div class="bar-row">
+        <div class="bar-label">Rede Parceria</div>
+        <div class="bar-track"><div class="bar-fill verde-light" data-width="0.82"></div></div>
+        <div class="bar-val">70+</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Uniforça</div>
+        <div class="bar-track"><div class="bar-fill verde" data-width="0.65"></div></div>
+        <div class="bar-val">~55</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Rede Integrada</div>
+        <div class="bar-track"><div class="bar-fill verde-pale" data-width="0.50"></div></div>
+        <div class="bar-val">~40</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Outros</div>
+        <div class="bar-track"><div class="bar-fill cinza" data-width="0.35"></div></div>
+        <div class="bar-val">var.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Communication -->
+<section class="comm" id="comunicacao" style="padding-top: 100px; padding-bottom: 100px;">
+  <div class="comm-header">
+    <span class="section-tag" style="color: var(--verde-dark);">Nossa Comunicação</span>
+    <h2 class="section-title" style="color: var(--preto);">Presença em todos os pontos</h2>
+  </div>
+  <div class="comm-grid">
+    <!-- Card 1 - tall -->
+    <div class="comm-card tall">
+      <div class="comm-card-img" style="height: 100%; min-height: 480px;">
+        <div class="mock-banner" style="height:100%; width:100%; background: linear-gradient(160deg, #2E6B12 0%, #5A9B2A 100%); padding: 40px; position: relative; overflow: hidden;">
+          <span class="sub">Campanha</span>
+          <span style="font-size: 42px; line-height: 1;">COM<br>VOCÊ<br>TODO<br>DIA</span>
+          <div style="position:absolute; bottom: 40px; left: 40px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <svg width="32" height="32" viewBox="0 0 40 40" fill="none"><path d="M6 8H34L30 26H10L6 8Z" fill="rgba(255,255,255,0.9)"/><circle cx="14" cy="33" r="3.5" fill="rgba(255,255,255,0.9)"/><circle cx="26" cy="33" r="3.5" fill="rgba(255,255,255,0.9)"/></svg>
+              <span style="font-size:14px;font-weight:700;color:white;">REDE PARCERIA</span>
+            </div>
+          </div>
+        </div>
+        <div class="comm-card-overlay"></div>
+      </div>
+    </div>
+    <!-- Card 2 -->
+    <div class="comm-card">
+      <div class="comm-card-img">
+        <div class="mock-banner" style="height:100%; width:100%; background: linear-gradient(135deg, #7DC340, #5A9B2A); font-size: 26px;">
+          <span class="sub">Oferta</span>
+          PREÇO<br>BAIXO<br>TODO DIA
+        </div>
+        <div class="comm-card-overlay">
+          <span class="comm-card-label">Encartes</span>
+        </div>
+      </div>
+    </div>
+    <!-- Card 3 -->
+    <div class="comm-card">
+      <div class="comm-card-img">
+        <div class="mock-shirt" style="height:100%; width:100%; font-size: 80px;">👕</div>
+        <div class="comm-card-overlay">
+          <span class="comm-card-label">Uniformes</span>
+        </div>
+      </div>
+    </div>
+    <!-- Card 4 -->
+    <div class="comm-card">
+      <div class="comm-card-img">
+        <div class="mock-bag" style="height:100%; width:100%; font-size: 80px; display:flex;align-items:center;justify-content:center;">🛍️</div>
+        <div class="comm-card-overlay">
+          <span class="comm-card-label">Embalagens</span>
+        </div>
+      </div>
+    </div>
+    <!-- Card 5 -->
+    <div class="comm-card">
+      <div class="comm-card-img">
+        <div class="mock-banner dark" style="height:100%; width:100%; font-size: 20px;">
+          <span class="sub">Digital</span>
+          REDES<br>SOCIAIS<br>TODO DIA
+        </div>
+        <div class="comm-card-overlay">
+          <span class="comm-card-label">Redes Sociais</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Products -->
+<section class="products" id="produtos">
+  <div class="products-header">
+    <span class="section-tag">Marca Própria</span>
+    <h2 class="section-title">Produtos Parceria</h2>
+    <p style="color: rgba(255,255,255,0.45); font-size: 15px; margin-top: 12px; max-width: 500px;">
+      Nossa linha de produtos próprios traz qualidade e economia para a mesa do cliente todo dia.
+    </p>
+  </div>
+  <div class="products-grid">
+    <div class="product-card">
+      <div class="product-visual">
+        🫘
+        <span class="product-badge">Marca Própria</span>
+      </div>
+      <div class="product-info">
+        <h3>Feijão Carioca</h3>
+        <p>1kg · Tipo 1 · Com você todo dia</p>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-visual" style="font-size:64px;">🌾</div>
+      <div class="product-info">
+        <h3>Arroz Branco</h3>
+        <p>1kg · Longo Fino · Qualidade garantida</p>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-visual" style="font-size:64px;">🍅</div>
+      <div class="product-info">
+        <h3>Molho de Tomate</h3>
+        <p>150ml · Sabor e economia</p>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-visual" style="font-size:64px;">🧄</div>
+      <div class="product-info">
+        <h3>Polpa de Alho</h3>
+        <p>200g · Sempre fresco</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contato">
+  <div class="cta-inner">
+    <span class="section-tag" style="color: rgba(255,255,255,0.7);">Faça parte</span>
+    <h2 class="section-title">Seja um associado<br>Rede Parceria</h2>
+    <p>Junte-se à maior rede de supermercados independentes do Ceará. Inteligência de mercado, poder de compra e marca forte.</p>
+    <a href="#" class="btn-white">
+      Quero ser associado
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9 4L13 8L9 12" stroke="#2E6B12" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="nav-logo" style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+        <svg width="36" height="36" viewBox="0 0 40 40" fill="none"><path d="M6 8H34L30 26H10L6 8Z" fill="#5A9B2A"/><rect x="6" y="8" width="28" height="5" rx="2.5" fill="#7DC340"/><circle cx="14" cy="33" r="3.5" fill="#7DC340"/><circle cx="26" cy="33" r="3.5" fill="#7DC340"/></svg>
+        <div class="nav-logo-text" style="font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;color:white;letter-spacing:0.05em;line-height:1.2;">
+          <span style="color:#7DC340;display:block;">Rede</span>Parceria
+        </div>
+      </div>
+      <p class="footer-brand-desc">
+        Inteligência para envolver sua marca e desenvolver seu mercado. Com você todo dia.
+      </p>
+    </div>
+    <div class="footer-col">
+      <h4>Institucional</h4>
+      <ul>
+        <li><a href="#">Sobre a Rede</a></li>
+        <li><a href="#">Nossa História</a></li>
+        <li><a href="#">Identidade Visual</a></li>
+        <li><a href="#">Seja Associado</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Lojas</h4>
+      <ul>
+        <li><a href="#">Encontre uma Loja</a></li>
+        <li><a href="#">Associados</a></li>
+        <li><a href="#">Expansão</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contato</h4>
+      <ul>
+        <li><a href="#">@redeparceriaoficial</a></li>
+        <li><a href="#">85 99858-0612</a></li>
+        <li><a href="#">Fortaleza, CE</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2024 Rede Parceria Supermercados · Todos os direitos reservados</p>
+    <div class="footer-social">
+      <a href="#" class="social-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+      </a>
+      <a href="#" class="social-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.transform = `translate(${mx - 6}px, ${my - 6}px)`;
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    cursorRing.style.transform = `translate(${rx - 20}px, ${ry - 20}px)`;
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => cursorRing.classList.add('expand'));
+    el.addEventListener('mouseleave', () => cursorRing.classList.remove('expand'));
+  });
+
+  // Nav scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Intersection observer for animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        // Animate bars
+        entry.target.querySelectorAll('.bar-fill').forEach(bar => {
+          const w = bar.dataset.width;
+          setTimeout(() => {
+            bar.style.transform = `scaleX(${w})`;
+            bar.classList.add('animated');
+          }, 200);
+        });
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.stat-item, .brand-feature, .comp-chart').forEach(el => observer.observe(el));
+
+  // Counter animation
+  const countObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const nums = entry.target.querySelectorAll('[data-count]');
+        nums.forEach((el, i) => {
+          setTimeout(() => {
+            const target = parseInt(el.dataset.count);
+            const suffix = el.dataset.suffix || '';
+            let current = 0;
+            const step = target / 50;
+            const timer = setInterval(() => {
+              current = Math.min(current + step, target);
+              el.textContent = Math.floor(current) + suffix;
+              if (current >= target) clearInterval(timer);
+            }, 30);
+          }, i * 150);
+        });
+        countObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('.stats-bar').forEach(el => countObserver.observe(el));
+</script>
+</body>
+</html>
